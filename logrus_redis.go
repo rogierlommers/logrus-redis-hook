@@ -85,7 +85,7 @@ func createMessage(entry *logrus.Entry) Message {
 		Type:       "type hier",
 		Message:    entry.Message,
 		Sourcehost: reportHostname(),
-		Timestamp:  time.Now(),
+		Timestamp:  time.Now().UTC(),
 	}
 	return m
 }
