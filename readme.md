@@ -1,3 +1,14 @@
+# Redis Hook for [Logrus](https://github.com/Sirupsen/logrus) <img src="http://i.imgur.com/hTeVwmJ.png" width="40" height="40" alt=":walrus:" class="emoji" title=":walrus:"/>
+
+## Install
+
+```shell
+$ go get github.com/rogierlommers/logrus-redis-hook
+```
+
+## Usage
+
+```go
 package main
 
 import (
@@ -23,3 +34,7 @@ func main() {
 		time.Sleep(1 * time.Second)
 	}
 }
+```
+
+## License
+*MIT*
