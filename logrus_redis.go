@@ -20,11 +20,10 @@ type RedisHook struct {
 
 // Message holds information which is sent to REDIS
 type Message struct {
-	Level      string
-	Type       string
-	Message    string
-	Sourcehost string
-	Timestamp  time.Time
+	Type       string `json:"@type,omitempty"`
+	Timestamp  string `json:"@timestamp"`
+	Sourcehost string `json:"host"`
+	Message    string `json:"message"`
 }
 
 // NewHook creates a hook to be added to an instance of logger
@@ -81,11 +80,10 @@ func (hook *RedisHook) Levels() []logrus.Level {
 
 func createMessage(entry *logrus.Entry) Message {
 	m := Message{
-		Level:      entry.Level.String(),
 		Type:       "type hier",
-		Message:    entry.Message,
+		Timestamp:  entry.Time.UTC().Format(time.RFC3339Nano),
 		Sourcehost: reportHostname(),
-		Timestamp:  time.Now().UTC(),
+		Message:    entry.Message,
 	}
 	return m
 }
@@ -107,6 +105,7 @@ func newRedisConnectionPool(server string, port int) *redis.Pool {
 			// 		return nil, err
 			// 	}
 			// }
+
 			return c, err
 		},
 		TestOnBorrow: func(c redis.Conn, t time.Time) error {
