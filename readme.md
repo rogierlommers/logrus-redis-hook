@@ -6,6 +6,8 @@
 $ go get github.com/rogierlommers/logrus-redis-hook
 ```
 
+![Colored](http://i.imgur.com/3sWfI4s.jpg)
+
 ## Usage
 
 ```go
