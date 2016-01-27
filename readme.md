@@ -1,5 +1,9 @@
 # Redis Hook for [Logrus](https://github.com/Sirupsen/logrus) <img src="http://i.imgur.com/hTeVwmJ.png" width="40" height="40" alt=":walrus:" class="emoji" title=":walrus:"/>
 
+## Why?
+
+Useful for centralized logging, using a RELK stack (Redis, Elasticsearch, Logstash and Kibana).
+
 ## Install
 
 ```shell
@@ -14,27 +18,20 @@ $ go get github.com/rogierlommers/logrus-redis-hook
 package main
 
 import (
-	"time"
-
-	"github.com/Sirupsen/logrus"
+	log "github.com/Sirupsen/logrus"
 	"github.com/rogierlommers/logrus-redis-hook"
 )
 
-var log = logrus.New()
-
 func init() {
-	hook, err := logredis.NewHook("localhost", 6379, "mykey")
+	hook, err := logredis.NewHook("localhost", 6379, "my_redis_key")
 	if err == nil {
-		log.Hooks.Add(hook)
+		log.AddHook(hook)
 	}
 }
 
 func main() {
-	// send 1000 records to redis
-	for i := 0; i < 1000; i++ {
-		log.Infof("logrule, number: %d", i)
-		time.Sleep(1 * time.Second)
-	}
+	// when hook is injected succesfully, logs will be send to redis server
+	log.Info("just some logging...")
 }
 ```
 
