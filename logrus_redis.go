@@ -80,7 +80,6 @@ func (hook *RedisHook) Levels() []logrus.Level {
 
 func createMessage(entry *logrus.Entry) Message {
 	m := Message{
-		Type:       "type hier",
 		Timestamp:  entry.Time.UTC().Format(time.RFC3339Nano),
 		Sourcehost: reportHostname(),
 		Message:    entry.Message,
