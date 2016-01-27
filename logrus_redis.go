@@ -22,8 +22,8 @@ type RedisHook struct {
 type Message struct {
 	Type       string `json:"@type,omitempty"`
 	Timestamp  string `json:"@timestamp"`
-	Sourcehost string `json:"host"`
-	Message    string `json:"message"`
+	Sourcehost string `json:"@source_host"`
+	Message    string `json:"@message"`
 }
 
 // NewHook creates a hook to be added to an instance of logger
