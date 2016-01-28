@@ -9,7 +9,7 @@ By using the docker-compose.yml file, you can easily run a complete testing envi
 - After a while, Redis is listening on localhost, port 6379.
 - Every message sent to Redis with key `my_redis_key` will be processed by Logstash.
 
-## Change key
+## Change configuration
 If you want to change the key, simply edit the `logstash.conf` file, there is an entry `key`. By default, Logstash is setup to process V0 messages, if you want to change this to V1, edit the entry `codec` from `oldlogstashjson` to `json`.
 
 ## Screenshot after compose-up
