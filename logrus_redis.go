@@ -18,23 +18,8 @@ type RedisHook struct {
 	RedisPort int
 }
 
-
-}
-// LogstashMessageV1 represents v1 format
-type LogstashMessageV1 struct {
-	Type       string `json:"@type,omitempty"`
-	Timestamp  string `json:"@timestamp"`
-	Sourcehost string `json:"host"`
-	Message    string `json:"message"`
-}
-
-// // Message holds information which is sent to REDIS
-// type Message struct {
-// 	Type       string `json:"@type,omitempty"`
-// 	Timestamp  string `json:"@timestamp"`
-// 	Sourcehost string `json:"@source_host"`
-// 	Message    string `json:"@message"`
-gstashMessageV0 struct {
+// LogstashMessageV0 represents v0 format
+type LogstashMessageV0 struct {
 	Type       string `json:"@type,omitempty"`
 	Timestamp  string `json:"@timestamp"`
 	Sourcehost string `json:"@source_host"`
@@ -51,8 +36,6 @@ gstashMessageV0 struct {
 		Timestamp string `json:"timestamp"`
 	} `json:"@fields"`
 }
-
-// }
 
 // NewHook creates a hook to be added to an instance of logger
 func NewHook(host string, port int, key string) (*RedisHook, error) {
@@ -107,12 +90,11 @@ func (hook *RedisHook) Levels() []logrus.Level {
 }
 
 func createMessage(entry *logrus.Entry) LogstashMessageV0 {
-	m := LogstashMessageV0{
-		Timestamp:    entry.Time.UTC().Format(time.RFC3339Nano),
-		Sourcehost:   reportHostname(),
-		Message:      entry.Message,
-		Fields.Level: entry.Level.String(),
-	}
+	m := LogstashMessageV0{}
+	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
+	m.Sourcehost = reportHostname()
+	m.Message = entry.Message
+	m.Fields.Level = entry.Level.String()
 	return m
 }
 
