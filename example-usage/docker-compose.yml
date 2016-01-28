@@ -1,11 +1,11 @@
 redis:
   image: redis:3.0.0
+  net: "host"
   ports:
   - 6379:6379
 logstash:
   image: logstash:1.5.6
+  net: "host"
   command: 'logstash -v -f /logstash.conf'
   volumes:
   - ./logstash.conf:/logstash.conf:ro
-  links:
-  - redis
