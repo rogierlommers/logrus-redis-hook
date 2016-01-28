@@ -2,7 +2,7 @@
 
 ## Why?
 
-Useful for centralized logging, using a RELK stack (Redis, Elasticsearch, Logstash and Kibana).
+Useful for centralized logging, using a RELK stack (Redis, Elasticsearch, Logstash and Kibana). When the hook is installed, all log messages are sent to a Redis server, in Logstash message V0 or V1 format.
 
 ## Install
 
@@ -33,6 +33,34 @@ func main() {
 	// when hook is injected succesfully, logs will be send to redis server
 	log.Info("just some logging...")
 }
+```
+
+## Message types sent to redis
+
+LogstashMessageV0
+```
+type LogstashMessageV0 struct {
+	Type       string `json:"@type,omitempty"`
+	Timestamp  string `json:"@timestamp"`
+	Sourcehost string `json:"@source_host"`
+	Message    string `json:"@message"`
+	Level      string `json:"@level"`
+	Fields     struct {
+		Exception struct {
+			ExceptionClass   string `json:"exception_class"`
+			ExceptionMessage string `json:"exception_message"`
+			Stacktrace       string `json:"stacktrace"`
+		} `json:"exception"`
+		File      string `json:"file"`
+		Level     string `json:"level"`
+		Timestamp string `json:"timestamp"`
+	} `json:"@fields"`
+}
+```
+
+LogstashMessageV1
+```
+work in progresss...
 ```
 
 ## License
