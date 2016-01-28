@@ -63,5 +63,8 @@ type LogstashMessageV0 struct {
 work in progresss...
 ```
 
+## Testing
+Please see the `docker-compose` directory for information about how to test. There is a readme inside.
+
 ## License
 *MIT*
