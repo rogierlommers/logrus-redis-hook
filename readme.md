@@ -2,7 +2,7 @@
 
 ## Why?
 
-Useful for centralized logging, using a RELK stack (Redis, Elasticsearch, Logstash and Kibana). When the hook is installed, all log messages are sent to a Redis server, in Logstash message V0 or V1 format.
+Useful for centralized logging, using a RELK stack (Redis, Elasticsearch, Logstash and Kibana). When the hook is installed, all log messages are sent to a Redis server, in Logstash message V0 or V1 format, ready to be parsed/processed by Logstash.
 
 ## Install
 
@@ -37,7 +37,7 @@ func main() {
 
 ## Message types sent to redis
 
-LogstashMessageV0
+#### LogstashMessageV0
 ```
 type LogstashMessageV0 struct {
 	Type       string `json:"@type,omitempty"`
@@ -58,7 +58,7 @@ type LogstashMessageV0 struct {
 }
 ```
 
-LogstashMessageV1
+#### LogstashMessageV1
 ```
 work in progresss...
 ```
