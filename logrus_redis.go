@@ -3,6 +3,7 @@ package logredis
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -12,10 +13,11 @@ import (
 
 // RedisHook to sends logs to Redis server
 type RedisHook struct {
-	RedisPool *redis.Pool
-	RedisHost string
-	RedisKey  string
-	RedisPort int
+	RedisPool      *redis.Pool
+	RedisHost      string
+	RedisKey       string
+	LogstashFormat string
+	RedisPort      int
 }
 
 // LogstashMessageV0 represents v0 format
@@ -26,11 +28,19 @@ type LogstashMessageV0 struct {
 	Message    string `json:"@message"`
 	Level      string `json:"@level"`
 	Fields     struct {
-		Exception struct {
-			ExceptionClass   string `json:"exception_class"`
-			ExceptionMessage string `json:"exception_message"`
-			Stacktrace       string `json:"stacktrace"`
-		} `json:"exception"`
+		File      string `json:"file"`
+		Level     string `json:"level"`
+		Timestamp string `json:"timestamp"`
+	} `json:"@fields"`
+}
+
+// LogstashMessageV1 represents v1 format
+type LogstashMessageV1 struct {
+	Type       string `json:"@type,omitempty"`
+	Timestamp  string `json:"@timestamp"`
+	Sourcehost string `json:"host"`
+	Message    string `json:"message"`
+	Fields     struct {
 		File      string `json:"file"`
 		Level     string `json:"level"`
 		Timestamp string `json:"timestamp"`
@@ -38,7 +48,7 @@ type LogstashMessageV0 struct {
 }
 
 // NewHook creates a hook to be added to an instance of logger
-func NewHook(host string, port int, key string) (*RedisHook, error) {
+func NewHook(host string, port int, key string, format string) (*RedisHook, error) {
 	pool := newRedisConnectionPool(host, port)
 
 	// test if connection with REDIS can be established
@@ -51,16 +61,30 @@ func NewHook(host string, port int, key string) (*RedisHook, error) {
 		return nil, fmt.Errorf("unable to connect to REDIS: %s", err)
 	}
 
+	// by default, use V0 format
+	if format == "" {
+		log.Println("setting defualt")
+		format = "v0"
+	}
+
 	return &RedisHook{
-		RedisHost: host,
-		RedisPool: pool,
-		RedisKey:  key,
+		RedisHost:      host,
+		RedisPool:      pool,
+		RedisKey:       key,
+		LogstashFormat: format,
 	}, nil
 }
 
 // Fire is called when a log event is fired.
 func (hook *RedisHook) Fire(entry *logrus.Entry) error {
-	msg := createMessage(entry)
+	var msg interface{}
+
+	switch hook.LogstashFormat {
+	case "v0":
+		msg = createV0Message(entry)
+	case "v1":
+		msg = createV1Message(entry)
+	}
 
 	js, err := json.Marshal(msg)
 	if err != nil {
@@ -89,8 +113,17 @@ func (hook *RedisHook) Levels() []logrus.Level {
 	}
 }
 
-func createMessage(entry *logrus.Entry) LogstashMessageV0 {
+func createV0Message(entry *logrus.Entry) LogstashMessageV0 {
 	m := LogstashMessageV0{}
+	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
+	m.Sourcehost = reportHostname()
+	m.Message = entry.Message
+	m.Fields.Level = entry.Level.String()
+	return m
+}
+
+func createV1Message(entry *logrus.Entry) LogstashMessageV1 {
+	m := LogstashMessageV1{}
 	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
 	m.Sourcehost = reportHostname()
 	m.Message = entry.Message
