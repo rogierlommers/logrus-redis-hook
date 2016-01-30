@@ -3,8 +3,8 @@ package logredis
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -62,8 +62,7 @@ func NewHook(host string, port int, key string, format string) (*RedisHook, erro
 	}
 
 	// by default, use V0 format
-	if format == "" {
-		log.Println("setting defualt")
+	if strings.ToLower(format) != "v0" && strings.ToLower(format) != "v1" {
 		format = "v0"
 	}
 
