@@ -17,6 +17,7 @@ type RedisHook struct {
 	RedisHost      string
 	RedisKey       string
 	LogstashFormat string
+	AppName		string
 	RedisPort      int
 }
 
@@ -26,11 +27,11 @@ type LogstashMessageV0 struct {
 	Timestamp  string `json:"@timestamp"`
 	Sourcehost string `json:"@source_host"`
 	Message    string `json:"@message"`
-	Level      string `json:"@level"`
+//	Level      string `json:"@level"`
 	Fields     struct {
+		Application    string `json:application` 
 		File      string `json:"file"`
 		Level     string `json:"level"`
-		Timestamp string `json:"timestamp"`
 	} `json:"@fields"`
 }
 
@@ -40,15 +41,13 @@ type LogstashMessageV1 struct {
 	Timestamp  string `json:"@timestamp"`
 	Sourcehost string `json:"host"`
 	Message    string `json:"message"`
-	Fields     struct {
-		File      string `json:"file"`
-		Level     string `json:"level"`
-		Timestamp string `json:"timestamp"`
-	} `json:"@fields"`
+	Application string `json:"application"`
+	File      string `json:"file"`
+	Level     string `json:"level"`
 }
 
 // NewHook creates a hook to be added to an instance of logger
-func NewHook(host string, port int, key string, format string) (*RedisHook, error) {
+func NewHook(host string, port int, key string, format string, appname string) (*RedisHook, error) {
 	pool := newRedisConnectionPool(host, port)
 
 	// test if connection with REDIS can be established
@@ -71,6 +70,7 @@ func NewHook(host string, port int, key string, format string) (*RedisHook, erro
 		RedisPool:      pool,
 		RedisKey:       key,
 		LogstashFormat: format,
+		AppName:        appname,
 	}, nil
 }
 
@@ -118,6 +118,7 @@ func createV0Message(entry *logrus.Entry) LogstashMessageV0 {
 	m.Sourcehost = reportHostname()
 	m.Message = entry.Message
 	m.Fields.Level = entry.Level.String()
+	m.Fields.Application = entry.AppName
 	return m
 }
 
@@ -126,7 +127,7 @@ func createV1Message(entry *logrus.Entry) LogstashMessageV1 {
 	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
 	m.Sourcehost = reportHostname()
 	m.Message = entry.Message
-	m.Fields.Level = entry.Level.String()
+	m.Level = entry.Level.String()
 	return m
 }
 
