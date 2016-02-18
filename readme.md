@@ -23,7 +23,7 @@ import (
 )
 
 func init() {
-	hook, err := logredis.NewHook("localhost", 6379, "my_redis_key")
+	hook, err := logredis.NewHook("localhost", 6379, "my_redis_key", "my_app_name")
 	if err == nil {
 		log.AddHook(hook)
 	}
@@ -44,23 +44,25 @@ type LogstashMessageV0 struct {
 	Timestamp  string `json:"@timestamp"`
 	Sourcehost string `json:"@source_host"`
 	Message    string `json:"@message"`
-	Level      string `json:"@level"`
 	Fields     struct {
-		Exception struct {
-			ExceptionClass   string `json:"exception_class"`
-			ExceptionMessage string `json:"exception_message"`
-			Stacktrace       string `json:"stacktrace"`
-		} `json:"exception"`
-		File      string `json:"file"`
-		Level     string `json:"level"`
-		Timestamp string `json:"timestamp"`
+		Application string `json:"application"`
+		File        string `json:"file"`
+		Level       string `json:"level"`
 	} `json:"@fields"`
 }
 ```
 
 #### LogstashMessageV1
 ```
-work in progresss...
+type LogstashMessageV1 struct {
+	Type        string `json:"@type,omitempty"`
+	Timestamp   string `json:"@timestamp"`
+	Sourcehost  string `json:"host"`
+	Message     string `json:"message"`
+	Application string `json:"application"`
+	File        string `json:"file"`
+	Level       string `json:"level"`
+}
 ```
 
 ## Testing

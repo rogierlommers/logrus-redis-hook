@@ -27,8 +27,7 @@ type LogstashMessageV0 struct {
 	Timestamp  string `json:"@timestamp"`
 	Sourcehost string `json:"@source_host"`
 	Message    string `json:"@message"`
-	//	Level      string `json:"@level"`
-	Fields struct {
+	Fields     struct {
 		Application string `json:"application"`
 		File        string `json:"file"`
 		Level       string `json:"level"`
