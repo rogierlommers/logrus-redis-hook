@@ -17,7 +17,7 @@ type RedisHook struct {
 	RedisHost      string
 	RedisKey       string
 	LogstashFormat string
-	AppName		string
+	AppName        string
 	RedisPort      int
 }
 
@@ -27,23 +27,23 @@ type LogstashMessageV0 struct {
 	Timestamp  string `json:"@timestamp"`
 	Sourcehost string `json:"@source_host"`
 	Message    string `json:"@message"`
-//	Level      string `json:"@level"`
-	Fields     struct {
-		Application    string `json:application` 
-		File      string `json:"file"`
-		Level     string `json:"level"`
+	//	Level      string `json:"@level"`
+	Fields struct {
+		Application string `json:"application"`
+		File        string `json:"file"`
+		Level       string `json:"level"`
 	} `json:"@fields"`
 }
 
 // LogstashMessageV1 represents v1 format
 type LogstashMessageV1 struct {
-	Type       string `json:"@type,omitempty"`
-	Timestamp  string `json:"@timestamp"`
-	Sourcehost string `json:"host"`
-	Message    string `json:"message"`
+	Type        string `json:"@type,omitempty"`
+	Timestamp   string `json:"@timestamp"`
+	Sourcehost  string `json:"host"`
+	Message     string `json:"message"`
 	Application string `json:"application"`
-	File      string `json:"file"`
-	Level     string `json:"level"`
+	File        string `json:"file"`
+	Level       string `json:"level"`
 }
 
 // NewHook creates a hook to be added to an instance of logger
@@ -80,9 +80,9 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 
 	switch hook.LogstashFormat {
 	case "v0":
-		msg = createV0Message(entry)
+		msg = createV0Message(entry, hook.AppName)
 	case "v1":
-		msg = createV1Message(entry)
+		msg = createV1Message(entry, hook.AppName)
 	}
 
 	js, err := json.Marshal(msg)
@@ -112,22 +112,23 @@ func (hook *RedisHook) Levels() []logrus.Level {
 	}
 }
 
-func createV0Message(entry *logrus.Entry) LogstashMessageV0 {
+func createV0Message(entry *logrus.Entry, appName string) LogstashMessageV0 {
 	m := LogstashMessageV0{}
 	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
 	m.Sourcehost = reportHostname()
 	m.Message = entry.Message
 	m.Fields.Level = entry.Level.String()
-	m.Fields.Application = entry.AppName
+	m.Fields.Application = appName
 	return m
 }
 
-func createV1Message(entry *logrus.Entry) LogstashMessageV1 {
+func createV1Message(entry *logrus.Entry, appName string) LogstashMessageV1 {
 	m := LogstashMessageV1{}
 	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
 	m.Sourcehost = reportHostname()
 	m.Message = entry.Message
 	m.Level = entry.Level.String()
+	m.Application = appName
 	return m
 }
 
