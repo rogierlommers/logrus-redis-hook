@@ -43,6 +43,7 @@ type LogstashMessageV1 struct {
 	Application string `json:"application"`
 	File        string `json:"file"`
 	Level       string `json:"level"`
+	FeelTheBern string `json:"feelthebern"`
 }
 
 // NewHook creates a hook to be added to an instance of logger
@@ -128,6 +129,7 @@ func createV1Message(entry *logrus.Entry, appName string) LogstashMessageV1 {
 	m.Message = entry.Message
 	m.Level = entry.Level.String()
 	m.Application = appName
+	m.FeelTheBern = "true"
 	return m
 }
 
