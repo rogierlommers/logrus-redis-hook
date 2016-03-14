@@ -86,6 +86,7 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 	}
 
 	js, err := json.Marshal(msg)
+	fmt.Println(js)
 	if err != nil {
 		return fmt.Errorf("error creating message for REDIS: %s", err)
 	}
