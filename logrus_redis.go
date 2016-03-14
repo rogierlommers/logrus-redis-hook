@@ -48,7 +48,6 @@ type LogstashMessageV1 struct {
 
 func (m LogstashMessageV1) MarshalJSON() ([]byte, error) {
 	data := map[string]interface{}{
-		"@type":       m.Type,
 		"@timestamp":  m.Timestamp,
 		"host":        m.Sourcehost,
 		"message":     m.Message,
@@ -56,12 +55,16 @@ func (m LogstashMessageV1) MarshalJSON() ([]byte, error) {
 		"file":        m.File,
 		"level":       m.Level,
 	}
+	if m.Type != "" {
+		data["@type"] = m.Type
+	}
+
 	for k, v := range m.entry.Data {
 		switch v := v.(type) {
 		case error:
-			data[k] = v.Error()
+			data["data_"+k] = v.Error()
 		default:
-			data[k] = v
+			data["data_"+k] = v
 		}
 	}
 	return json.Marshal(data)
