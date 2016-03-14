@@ -43,7 +43,28 @@ type LogstashMessageV1 struct {
 	Application string `json:"application"`
 	File        string `json:"file"`
 	Level       string `json:"level"`
-	FeelTheBern string `json:"feelthebern"`
+	entry       *logrus.Entry
+}
+
+func (m LogstashMessageV1) MarshalJSON() ([]byte, error) {
+	data := map[string]interface{}{
+		"@type":       m.Type,
+		"@timestamp":  m.Timestamp,
+		"host":        m.Sourcehost,
+		"message":     m.Message,
+		"application": m.Application,
+		"file":        m.File,
+		"level":       m.Level,
+	}
+	for k, v := range m.entry.Data {
+		switch v := v.(type) {
+		case error:
+			data[k] = v.Error()
+		default:
+			data[k] = v
+		}
+	}
+	return json.Marshal(data)
 }
 
 // NewHook creates a hook to be added to an instance of logger
@@ -86,7 +107,7 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 	}
 
 	js, err := json.Marshal(msg)
-	fmt.Println(js)
+
 	if err != nil {
 		return fmt.Errorf("error creating message for REDIS: %s", err)
 	}
@@ -130,7 +151,7 @@ func createV1Message(entry *logrus.Entry, appName string) LogstashMessageV1 {
 	m.Message = entry.Message
 	m.Level = entry.Level.String()
 	m.Application = appName
-	m.FeelTheBern = "true"
+	m.entry = entry
 	return m
 }
 
