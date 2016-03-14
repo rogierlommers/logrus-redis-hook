@@ -55,11 +55,13 @@ func (m LogstashMessageV1) MarshalJSON() ([]byte, error) {
 		"file":        m.File,
 		"level":       m.Level,
 	}
+
 	if m.Type != "" {
 		data["@type"] = m.Type
 	}
 
 	for k, v := range m.entry.Data {
+		k = strings.Replace(k, "#", "", -1)
 		switch v := v.(type) {
 		case error:
 			data["data_"+k] = v.Error()
