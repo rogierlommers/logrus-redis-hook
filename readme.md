@@ -68,5 +68,5 @@ type LogstashMessageV1 struct {
 ## Testing
 Please see the `docker-compose` directory for information about how to test. There is a readme inside.
 
-## License
-*MIT*
+## In case of hook: disable writing to stdout
+See this: https://github.com/Sirupsen/logrus/issues/328#issuecomment-210758435
