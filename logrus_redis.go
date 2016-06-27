@@ -3,7 +3,6 @@ package logredis
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -18,6 +17,7 @@ type RedisHook struct {
 	RedisKey       string
 	LogstashFormat string
 	AppName        string
+	Hostname       string
 	RedisPort      int
 }
 
@@ -46,8 +46,8 @@ type LogstashMessageV1 struct {
 }
 
 // NewHook creates a hook to be added to an instance of logger
-func NewHook(host string, port int, key string, format string, appname string) (*RedisHook, error) {
-	pool := newRedisConnectionPool(host, port)
+func NewHook(redisHost string, port int, key string, format string, appname string, hostname string) (*RedisHook, error) {
+	pool := newRedisConnectionPool(redisHost, port)
 
 	// test if connection with REDIS can be established
 	conn := pool.Get()
@@ -65,11 +65,12 @@ func NewHook(host string, port int, key string, format string, appname string) (
 	}
 
 	return &RedisHook{
-		RedisHost:      host,
+		RedisHost:      redisHost,
 		RedisPool:      pool,
 		RedisKey:       key,
 		LogstashFormat: format,
 		AppName:        appname,
+		Hostname:       hostname,
 	}, nil
 }
 
@@ -79,9 +80,9 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 
 	switch hook.LogstashFormat {
 	case "v0":
-		msg = createV0Message(entry, hook.AppName)
+		msg = createV0Message(entry, hook.AppName, hook.Hostname)
 	case "v1":
-		msg = createV1Message(entry, hook.AppName)
+		msg = createV1Message(entry, hook.AppName, hook.Hostname)
 	}
 
 	js, err := json.Marshal(msg)
@@ -111,20 +112,20 @@ func (hook *RedisHook) Levels() []logrus.Level {
 	}
 }
 
-func createV0Message(entry *logrus.Entry, appName string) LogstashMessageV0 {
+func createV0Message(entry *logrus.Entry, appName, hostname string) LogstashMessageV0 {
 	m := LogstashMessageV0{}
 	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
-	m.Sourcehost = reportHostname()
+	m.Sourcehost = hostname
 	m.Message = entry.Message
 	m.Fields.Level = entry.Level.String()
 	m.Fields.Application = appName
 	return m
 }
 
-func createV1Message(entry *logrus.Entry, appName string) LogstashMessageV1 {
+func createV1Message(entry *logrus.Entry, appName, hostname string) LogstashMessageV1 {
 	m := LogstashMessageV1{}
 	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
-	m.Sourcehost = reportHostname()
+	m.Sourcehost = hostname
 	m.Message = entry.Message
 	m.Level = entry.Level.String()
 	m.Application = appName
@@ -156,12 +157,4 @@ func newRedisConnectionPool(server string, port int) *redis.Pool {
 			return err
 		},
 	}
-}
-
-func reportHostname() string {
-	h, err := os.Hostname()
-	if err != nil {
-		return "unknown"
-	}
-	return h
 }
