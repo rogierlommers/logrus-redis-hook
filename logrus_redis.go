@@ -60,9 +60,11 @@ func NewHook(redisHost string, port int, key string, format string, appname stri
 	}
 
 	// by default, use V0 format
-	if strings.ToLower(format) != "v0" && strings.ToLower(format) != "v1" {
+	if strings.ToLower(format) != "v0" && strings.ToLower(format) != "v1" && strings.ToLower(format) != "custom" {
 		format = "v0"
 	}
+
+
 
 	return &RedisHook{
 		RedisHost:      redisHost,
@@ -83,9 +85,15 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 		msg = createV0Message(entry, hook.AppName, hook.Hostname)
 	case "v1":
 		msg = createV1Message(entry, hook.AppName, hook.Hostname)
+	case "custom":
+		msg = createCustomMessage(entry, hook.AppName, hook.Hostname)
+	default:
+		fmt.Println("Invalid LogstashFormat")
 	}
 
+
 	js, err := json.Marshal(msg)
+	fmt.Println(string(js))
 	if err != nil {
 		return fmt.Errorf("error creating message for REDIS: %s", err)
 	}
@@ -129,6 +137,20 @@ func createV1Message(entry *logrus.Entry, appName, hostname string) LogstashMess
 	m.Message = entry.Message
 	m.Level = entry.Level.String()
 	m.Application = appName
+	return m
+}
+
+
+func createCustomMessage(entry *logrus.Entry, appName, hostname string) map[string]interface{} {
+	m := make(map[string]interface{})
+	m["@timestamp"] = entry.Time.UTC().Format(time.RFC3339Nano)
+	m["host"] = hostname
+	m["message"] = entry.Message
+	m["level"] = entry.Level.String()
+	m["application"] = appName
+	for k, v := range entry.Data {
+		m[k] = v
+	}
 	return m
 }
 
