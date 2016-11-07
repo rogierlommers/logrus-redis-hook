@@ -64,8 +64,6 @@ func NewHook(redisHost string, port int, key string, format string, appname stri
 		format = "v0"
 	}
 
-
-
 	return &RedisHook{
 		RedisHost:      redisHost,
 		RedisPool:      pool,
@@ -90,7 +88,6 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 	default:
 		fmt.Println("Invalid LogstashFormat")
 	}
-
 
 	js, err := json.Marshal(msg)
 	fmt.Println(string(js))
@@ -140,7 +137,6 @@ func createV1Message(entry *logrus.Entry, appName, hostname string) LogstashMess
 	return m
 }
 
-
 func createCustomMessage(entry *logrus.Entry, appName, hostname string) map[string]interface{} {
 	m := make(map[string]interface{})
 	m["@timestamp"] = entry.Time.UTC().Format(time.RFC3339Nano)
@@ -165,6 +161,9 @@ func newRedisConnectionPool(server string, port int) *redis.Pool {
 				return nil, err
 			}
 
+			// In case redis needs authentication
+			// https://github.com/rogierlommers/logrus-redis-hook/issues/2
+			//
 			// if password != "" {
 			// 	if _, err := c.Do("AUTH", password); err != nil {
 			// 		c.Close()
