@@ -21,30 +21,6 @@ type RedisHook struct {
 	RedisPort      int
 }
 
-// LogstashMessageV0 represents v0 format
-type LogstashMessageV0 struct {
-	Type       string `json:"@type,omitempty"`
-	Timestamp  string `json:"@timestamp"`
-	Sourcehost string `json:"@source_host"`
-	Message    string `json:"@message"`
-	Fields     struct {
-		Application string `json:"application"`
-		File        string `json:"file"`
-		Level       string `json:"level"`
-	} `json:"@fields"`
-}
-
-// LogstashMessageV1 represents v1 format
-type LogstashMessageV1 struct {
-	Type        string `json:"@type,omitempty"`
-	Timestamp   string `json:"@timestamp"`
-	Sourcehost  string `json:"host"`
-	Message     string `json:"message"`
-	Application string `json:"application"`
-	File        string `json:"file"`
-	Level       string `json:"level"`
-}
-
 // NewHook creates a hook to be added to an instance of logger
 func NewHook(redisHost string, port int, key string, format string, appname string, hostname string) (*RedisHook, error) {
 	pool := newRedisConnectionPool(redisHost, port)
