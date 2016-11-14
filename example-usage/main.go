@@ -1,6 +1,8 @@
 package main
 
 import (
+	"io/ioutil"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/rogierlommers/logrus-redis-hook"
 )
@@ -30,4 +32,8 @@ func main() {
 		"foo":  "bar",
 		"this": "that"}).
 		Info("A walrus appears")
+
+	// If you want to disable writing to stdout, use setOutput
+	logrus.SetOutput(ioutil.Discard)
+	logrus.Info("This will only be sent to Redis")
 }
