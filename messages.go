@@ -10,6 +10,7 @@ type LogstashMessageV0 struct {
 		Application string `json:"application"`
 		File        string `json:"file"`
 		Level       string `json:"level"`
+		Labels      map[string]interface{}
 	} `json:"@fields"`
 }
 

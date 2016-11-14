@@ -3,7 +3,6 @@ package logredis
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -22,8 +21,8 @@ type RedisHook struct {
 }
 
 // NewHook creates a hook to be added to an instance of logger
-func NewHook(redisHost string, port int, key string, format string, appname string, hostname string) (*RedisHook, error) {
-	pool := newRedisConnectionPool(redisHost, port)
+func NewHook(redisHost, key, format, appname, hostname, password string, port int) (*RedisHook, error) {
+	pool := newRedisConnectionPool(redisHost, password, port)
 
 	// test if connection with REDIS can be established
 	conn := pool.Get()
@@ -33,11 +32,6 @@ func NewHook(redisHost string, port int, key string, format string, appname stri
 	_, err := conn.Do("PING")
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to REDIS: %s", err)
-	}
-
-	// by default, use V0 format
-	if strings.ToLower(format) != "v0" && strings.ToLower(format) != "v1" && strings.ToLower(format) != "custom" {
-		format = "v0"
 	}
 
 	return &RedisHook{
@@ -65,15 +59,17 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 		fmt.Println("Invalid LogstashFormat")
 	}
 
+	// Marshal into json message
 	js, err := json.Marshal(msg)
-	fmt.Println(string(js))
 	if err != nil {
 		return fmt.Errorf("error creating message for REDIS: %s", err)
 	}
 
+	// get connection from pool
 	conn := hook.RedisPool.Get()
 	defer conn.Close()
 
+	// send message
 	_, err = conn.Do("RPUSH", hook.RedisKey, js)
 	if err != nil {
 		return fmt.Errorf("error sending message to REDIS: %s", err)
@@ -100,6 +96,7 @@ func createV0Message(entry *logrus.Entry, appName, hostname string) LogstashMess
 	m.Message = entry.Message
 	m.Fields.Level = entry.Level.String()
 	m.Fields.Application = appName
+	m.Fields.Labels = entry.Data
 	return m
 }
 
@@ -126,7 +123,7 @@ func createCustomMessage(entry *logrus.Entry, appName, hostname string) map[stri
 	return m
 }
 
-func newRedisConnectionPool(server string, port int) *redis.Pool {
+func newRedisConnectionPool(server, password string, port int) *redis.Pool {
 	hostPort := fmt.Sprintf("%s:%d", server, port)
 	return &redis.Pool{
 		MaxIdle:     3,
@@ -138,14 +135,12 @@ func newRedisConnectionPool(server string, port int) *redis.Pool {
 			}
 
 			// In case redis needs authentication
-			// https://github.com/rogierlommers/logrus-redis-hook/issues/2
-			//
-			// if password != "" {
-			// 	if _, err := c.Do("AUTH", password); err != nil {
-			// 		c.Close()
-			// 		return nil, err
-			// 	}
-			// }
+			if password != "" {
+				if _, err := c.Do("AUTH", password); err != nil {
+					c.Close()
+					return nil, err
+				}
+			}
 
 			return c, err
 		},
