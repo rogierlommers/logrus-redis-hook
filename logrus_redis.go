@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/garyburd/redigo/redis"
 )
 
@@ -24,6 +25,9 @@ type RedisHook struct {
 func NewHook(redisHost, key, format, appname, hostname, password string, port int) (*RedisHook, error) {
 	pool := newRedisConnectionPool(redisHost, password, port)
 
+	if format != "v0" && format != "v1" {
+		return nil, fmt.Errorf("unknown message format")
+	}
 	// test if connection with REDIS can be established
 	conn := pool.Get()
 	defer conn.Close()
@@ -53,12 +57,11 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 		msg = createV0Message(entry, hook.AppName, hook.Hostname)
 	case "v1":
 		msg = createV1Message(entry, hook.AppName, hook.Hostname)
-	case "custom":
-		msg = createCustomMessage(entry, hook.AppName, hook.Hostname)
 	default:
 		fmt.Println("Invalid LogstashFormat")
 	}
 
+	spew.Dump(msg)
 	// Marshal into json message
 	js, err := json.Marshal(msg)
 	if err != nil {
@@ -89,28 +92,29 @@ func (hook *RedisHook) Levels() []logrus.Level {
 	}
 }
 
-func createV0Message(entry *logrus.Entry, appName, hostname string) LogstashMessageV0 {
-	m := LogstashMessageV0{}
-	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
-	m.Sourcehost = hostname
-	m.Message = entry.Message
-	m.Fields.Level = entry.Level.String()
-	m.Fields.Application = appName
-	m.Fields.Labels = entry.Data
+func createV0Message(entry *logrus.Entry, appName, hostname string) map[string]interface{} {
+	m := make(map[string]interface{})
+	m["@timestamp"] = entry.Time.UTC().Format(time.RFC3339Nano)
+	m["@source_host"] = hostname
+	m["@message"] = entry.Message
+
+	// build map with additional fields
+	fields := make(map[string]interface{})
+	fields["level"] = entry.Level.String()
+	fields["application"] = appName
+
+	for k, v := range entry.Data {
+		fields[k] = v
+	}
+
+	// add fields map to message
+	m["@fields"] = fields
+
+	// return full message
 	return m
 }
 
-func createV1Message(entry *logrus.Entry, appName, hostname string) LogstashMessageV1 {
-	m := LogstashMessageV1{}
-	m.Timestamp = entry.Time.UTC().Format(time.RFC3339Nano)
-	m.Sourcehost = hostname
-	m.Message = entry.Message
-	m.Level = entry.Level.String()
-	m.Application = appName
-	return m
-}
-
-func createCustomMessage(entry *logrus.Entry, appName, hostname string) map[string]interface{} {
+func createV1Message(entry *logrus.Entry, appName, hostname string) map[string]interface{} {
 	m := make(map[string]interface{})
 	m["@timestamp"] = entry.Time.UTC().Format(time.RFC3339Nano)
 	m["host"] = hostname
@@ -120,6 +124,8 @@ func createCustomMessage(entry *logrus.Entry, appName, hostname string) map[stri
 	for k, v := range entry.Data {
 		m[k] = v
 	}
+
+	// return full message
 	return m
 }
 
