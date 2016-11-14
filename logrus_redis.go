@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/garyburd/redigo/redis"
 )
 
@@ -61,7 +60,6 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 		fmt.Println("Invalid LogstashFormat")
 	}
 
-	spew.Dump(msg)
 	// Marshal into json message
 	js, err := json.Marshal(msg)
 	if err != nil {

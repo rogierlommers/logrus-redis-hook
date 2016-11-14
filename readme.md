@@ -28,7 +28,7 @@ import (
 func init() {
 	hook, err := logredis.NewHook("localhost",
 		"my_redis_key", // key to use
-		"v0",           // logstash format (v0, v1 or custom)
+		"v0",           // logstash format (v0, v1)
 		"my_app_name",  // your application name
 		"my_hostname",  // your hostname
 		"",             // password for redis authentication, leave empty for no authentication
@@ -37,7 +37,7 @@ func init() {
 	if err == nil {
 		logrus.AddHook(hook)
 	} else {
-		logrus.Error(err)
+		logrus.Errorf("logredis error: %q", err)
 	}
 }
 
@@ -46,10 +46,11 @@ func main() {
 	logrus.Info("just some info logging...")
 
 	// we also support log.WithFields()
-	logrus.WithFields(logrus.Fields{"animal": "walrus",
-		"foo":  "bar",
-		"this": "that"}).
-		Info("A walrus appears")
+	logrus.WithFields(logrus.Fields{
+		"animal": "walrus",
+		"foo":    "bar",
+		"this":   "that"}).
+		Info("additional fields are being logged as well")
 
 	// If you want to disable writing to stdout, use setOutput
 	logrus.SetOutput(ioutil.Discard)

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"io/ioutil"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/rogierlommers/logrus-redis-hook"
 )
@@ -8,7 +10,7 @@ import (
 func init() {
 	hook, err := logredis.NewHook("localhost",
 		"my_redis_key", // key to use
-		"v0",           // logstash format (v0, v1 or custom)
+		"v0",           // logstash format (v0, v1)
 		"my_app_name",  // your application name
 		"my_hostname",  // your hostname
 		"",             // password for redis authentication, leave empty for no authentication
@@ -23,7 +25,7 @@ func init() {
 
 func main() {
 	// when hook is injected succesfully, logs will be send to redis server
-	//logrus.Info("just some info logging...")
+	logrus.Info("just some info logging...")
 
 	// we also support log.WithFields()
 	logrus.WithFields(logrus.Fields{
@@ -33,6 +35,6 @@ func main() {
 		Info("additional fields are being logged as well")
 
 	// If you want to disable writing to stdout, use setOutput
-	// logrus.SetOutput(ioutil.Discard)
-	// logrus.Info("This will only be sent to Redis")
+	logrus.SetOutput(ioutil.Discard)
+	logrus.Info("This will only be sent to Redis")
 }
