@@ -16,6 +16,13 @@ $ go get github.com/rogierlommers/logrus-redis-hook
 ## Usage
 
 ```go
+package main
+
+import (
+	"github.com/Sirupsen/logrus"
+	"github.com/rogierlommers/logrus-redis-hook"
+)
+
 func init() {
 	hook, err := logredis.NewHook("localhost",
 		"my_redis_key", // key to use
@@ -26,18 +33,18 @@ func init() {
 		6379,           // redis port
 	)
 	if err == nil {
-		log.AddHook(hook)
+		logrus.AddHook(hook)
 	} else {
-		log.Error(err)
+		logrus.Error(err)
 	}
 }
 
 func main() {
 	// when hook is injected succesfully, logs will be send to redis server
-	log.Info("just some info logging...")
+	logrus.Info("just some info logging...")
 
 	// we also support log.WithFields()
-	log.WithFields(log.Fields{"animal": "walrus",
+	logrus.WithFields(logrus.Fields{"animal": "walrus",
 		"foo":  "bar",
 		"this": "that"}).
 		Info("A walrus appears")
