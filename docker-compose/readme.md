@@ -2,11 +2,11 @@
 
 ## Running Redis and Kibana with docker-compose
 
-By using the docker-compose.yml file, you can easily run a complete testing environment. The network settings are `net: "host"`, which means that the redis server will be listening on your localhost, default port ().
+By using the docker-compose.yml file, you can easily run a complete testing environment.
 
 ## Usage
 - Start by typing `docker-compose up`.
-- After a while, Redis is listening on localhost, port 6379.
+- After a while, Redis is listening on port 6379.
 - Every message sent to Redis with key `my_redis_key` will be processed by Logstash.
 
 ## Change configuration

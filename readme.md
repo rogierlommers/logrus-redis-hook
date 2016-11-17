@@ -1,4 +1,5 @@
 # Redis Hook for [Logrus](https://github.com/Sirupsen/logrus) <img src="http://i.imgur.com/hTeVwmJ.png" width="40" height="40" alt=":walrus:" class="emoji" title=":walrus:"/>
+[![Build Status](https://travis-ci.org/rogierlommers/logrus-redis-hook.svg?branch=master)](https://travis-ci.org/rogierlommers/logrus-redis-hook)
 
 ## Why?
 
@@ -18,52 +19,45 @@ $ go get github.com/rogierlommers/logrus-redis-hook
 package main
 
 import (
-	log "github.com/Sirupsen/logrus"
+	"io/ioutil"
+
+	"github.com/Sirupsen/logrus"
 	"github.com/rogierlommers/logrus-redis-hook"
 )
 
 func init() {
-	hook, err := logredis.NewHook("localhost", 6379, "my_redis_key", "my_app_name")
+	hook, err := logredis.NewHook("localhost",
+		"my_redis_key", // key to use
+		"v0",           // logstash format (v0, v1)
+		"my_app_name",  // your application name
+		"my_hostname",  // your hostname
+		"",             // password for redis authentication, leave empty for no authentication
+		6379,           // redis port
+	)
 	if err == nil {
-		log.AddHook(hook)
+		logrus.AddHook(hook)
+	} else {
+		logrus.Errorf("logredis error: %q", err)
 	}
 }
 
 func main() {
 	// when hook is injected succesfully, logs will be send to redis server
-	log.Info("just some logging...")
+	logrus.Info("just some info logging...")
+
+	// we also support log.WithFields()
+	logrus.WithFields(logrus.Fields{
+		"animal": "walrus",
+		"foo":    "bar",
+		"this":   "that"}).
+		Info("additional fields are being logged as well")
+
+	// If you want to disable writing to stdout, use setOutput
+	logrus.SetOutput(ioutil.Discard)
+	logrus.Info("This will only be sent to Redis")
 }
 ```
 
-## Message types sent to redis
-
-#### LogstashMessageV0
-```
-type LogstashMessageV0 struct {
-	Type       string `json:"@type,omitempty"`
-	Timestamp  string `json:"@timestamp"`
-	Sourcehost string `json:"@source_host"`
-	Message    string `json:"@message"`
-	Fields     struct {
-		Application string `json:"application"`
-		File        string `json:"file"`
-		Level       string `json:"level"`
-	} `json:"@fields"`
-}
-```
-
-#### LogstashMessageV1
-```
-type LogstashMessageV1 struct {
-	Type        string `json:"@type,omitempty"`
-	Timestamp   string `json:"@timestamp"`
-	Sourcehost  string `json:"host"`
-	Message     string `json:"message"`
-	Application string `json:"application"`
-	File        string `json:"file"`
-	Level       string `json:"level"`
-}
-```
 
 ## Testing
 Please see the `docker-compose` directory for information about how to test. There is a readme inside.
