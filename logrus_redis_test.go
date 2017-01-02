@@ -11,7 +11,7 @@ func TestNewHookFunc(t *testing.T) {
 		t.Fatalf("TestNewHookFunc, expected no hook, got hook: %s", hook)
 	}
 
-	if err == nil {
+	if err != nil {
 		t.Fatalf("TestNewHookFunc, expected %q, got %s.", "unknown message format", err)
 	}
 }
