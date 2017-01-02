@@ -1,4 +1,3 @@
 language: go
 version: 1.7
-
 sudo: false
