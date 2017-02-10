@@ -42,7 +42,7 @@ func init() {
 }
 
 func main() {
-	// when hook is injected succesfully, logs will be send to redis server
+	// when hook is injected succesfully, logs will be sent to redis server
 	logrus.Info("just some info logging...")
 
 	// we also support log.WithFields()
