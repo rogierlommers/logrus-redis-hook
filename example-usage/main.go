@@ -25,7 +25,12 @@ func init() {
 
 func main() {
 	// when hook is injected succesfully, logs will be send to redis server
+	logrus.Debug("just some debug logging...")
 	logrus.Info("just some info logging...")
+	logrus.Warn("just some warn logging...")
+	logrus.Error("just some error logging...")
+	// logrus.Fatal("just some fatal logging...") // commented out, because it will kill the app
+	// logrus.Panic("just some panic logging...") // commented out, because it will kill the app
 
 	// we also support log.WithFields()
 	logrus.WithFields(logrus.Fields{
