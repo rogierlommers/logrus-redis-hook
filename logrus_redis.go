@@ -21,8 +21,8 @@ type RedisHook struct {
 }
 
 // NewHook creates a hook to be added to an instance of logger
-func NewHook(redisHost, key, format, appname, hostname, password string, port int) (*RedisHook, error) {
-	pool := newRedisConnectionPool(redisHost, password, port)
+func NewHook(redisHost, key, format, appname, hostname, password string, port int, db int) (*RedisHook, error) {
+	pool := newRedisConnectionPool(redisHost, password, port, db)
 
 	if format != "v0" && format != "v1" {
 		return nil, fmt.Errorf("unknown message format")
@@ -127,13 +127,13 @@ func createV1Message(entry *logrus.Entry, appName, hostname string) map[string]i
 	return m
 }
 
-func newRedisConnectionPool(server, password string, port int) *redis.Pool {
+func newRedisConnectionPool(server, password string, port int, db int) *redis.Pool {
 	hostPort := fmt.Sprintf("%s:%d", server, port)
 	return &redis.Pool{
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", hostPort)
+			c, err := redis.Dial("tcp", hostPort, redis.DialDatabase(db))
 			if err != nil {
 				return nil, err
 			}
