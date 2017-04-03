@@ -9,6 +9,17 @@ import (
 	"github.com/garyburd/redigo/redis"
 )
 
+// HookConfig stores configuration needed to setup the hook
+type HookConfig struct {
+	Key      string
+	Format   string
+	App      string
+	Host     string
+	Password string
+	Port     int
+	DB       int
+}
+
 // RedisHook to sends logs to Redis server
 type RedisHook struct {
 	RedisPool      *redis.Pool
@@ -21,10 +32,10 @@ type RedisHook struct {
 }
 
 // NewHook creates a hook to be added to an instance of logger
-func NewHook(redisHost, key, format, appname, hostname, password string, port int, db int) (*RedisHook, error) {
-	pool := newRedisConnectionPool(redisHost, password, port, db)
+func NewHook(config HookConfig) (*RedisHook, error) {
+	pool := newRedisConnectionPool(config.Host, config.Password, config.Port, config.DB)
 
-	if format != "v0" && format != "v1" {
+	if config.Format != "v0" && config.Format != "v1" {
 		return nil, fmt.Errorf("unknown message format")
 	}
 	// test if connection with REDIS can be established
@@ -38,12 +49,12 @@ func NewHook(redisHost, key, format, appname, hostname, password string, port in
 	}
 
 	return &RedisHook{
-		RedisHost:      redisHost,
+		RedisHost:      config.Host,
 		RedisPool:      pool,
-		RedisKey:       key,
-		LogstashFormat: format,
-		AppName:        appname,
-		Hostname:       hostname,
+		RedisKey:       config.Key,
+		LogstashFormat: config.Format,
+		AppName:        config.App,
+		Hostname:       config.Host,
 	}, nil
 }
 

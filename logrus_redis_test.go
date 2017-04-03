@@ -6,7 +6,17 @@ import (
 )
 
 func TestNewHookFunc(t *testing.T) {
-	hook, err := NewHook("redishost", "key", "format", "appname", "hostname", "password", 1, 1)
+	config := HookConfig{
+		Host:     "localhost",
+		Key:      "key",
+		Format:   "format",
+		App:      "appname",
+		Password: "password",
+		Port:     1,
+		DB:       1,
+	}
+
+	hook, err := NewHook(config)
 	if hook != nil {
 		t.Fatalf("TestNewHookFunc, expected no hook, got hook: %s", hook)
 	}
