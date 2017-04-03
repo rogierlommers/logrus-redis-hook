@@ -32,7 +32,7 @@ func init() {
 		Format: "v0",
 		App:    "my_app_name",
 		Port:   6379,
-		DB:     0,
+		DB:     0, // optional
 	}
 
 	hook, err := logredis.NewHook(hookConfig)
