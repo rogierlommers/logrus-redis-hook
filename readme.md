@@ -26,15 +26,16 @@ import (
 )
 
 func init() {
-	hook, err := logredis.NewHook("localhost",
-		"my_redis_key", // key to use
-		"v0",           // logstash format (v0, v1)
-		"my_app_name",  // your application name
-		"my_hostname",  // your hostname
-		"",             // password for redis authentication, leave empty for no authentication
-		6379,           // redis port
-		0,              // redis database
-	)
+	hookConfig := logredis.HookConfig{
+		Host:   "localhost",
+		Key:    "my_redis_key",
+		Format: "v0",
+		App:    "my_app_name",
+		Port:   6379,
+		DB:     0,
+	}
+
+	hook, err := logredis.NewHook(hookConfig)
 	if err == nil {
 		logrus.AddHook(hook)
 	} else {
