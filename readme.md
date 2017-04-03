@@ -33,6 +33,7 @@ func init() {
 		"my_hostname",  // your hostname
 		"",             // password for redis authentication, leave empty for no authentication
 		6379,           // redis port
+		0,              // redis database
 	)
 	if err == nil {
 		logrus.AddHook(hook)

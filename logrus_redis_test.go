@@ -6,7 +6,7 @@ import (
 )
 
 func TestNewHookFunc(t *testing.T) {
-	hook, err := NewHook("redishost", "key", "format", "appname", "hostname", "password", 1)
+	hook, err := NewHook("redishost", "key", "format", "appname", "hostname", "password", 1, 1)
 	if hook != nil {
 		t.Fatalf("TestNewHookFunc, expected no hook, got hook: %s", hook)
 	}
