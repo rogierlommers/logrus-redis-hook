@@ -16,6 +16,7 @@ type HookConfig struct {
 	App      string
 	Host     string
 	Password string
+	Hostname string
 	Port     int
 	DB       int
 }

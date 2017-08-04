@@ -9,12 +9,13 @@ import (
 
 func init() {
 	hookConfig := logredis.HookConfig{
-		Host:   "localhost",
-		Key:    "my_redis_key",
-		Format: "v0",
-		App:    "my_app_name",
-		Port:   6379,
-		DB:     0,
+		Host:     "localhost",
+		Key:      "my_redis_key",
+		Format:   "v0",
+		App:      "my_app_name",
+		Hostname: "my_app_hostmame",
+		Port:     6379,
+		DB:       0,
 	}
 
 	hook, err := logredis.NewHook(hookConfig)
