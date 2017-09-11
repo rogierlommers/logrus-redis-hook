@@ -14,6 +14,7 @@ func TestNewHookFunc(t *testing.T) {
 		Password: "password",
 		Port:     1,
 		DB:       1,
+		TTL:      3600,
 	}
 
 	hook, err := NewHook(config)
