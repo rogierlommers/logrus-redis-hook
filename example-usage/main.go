@@ -3,8 +3,8 @@ package main
 import (
 	"io/ioutil"
 
-	"github.com/sirupsen/logrus"
 	"github.com/rogierlommers/logrus-redis-hook"
+	"github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -16,6 +16,7 @@ func init() {
 		Hostname: "my_app_hostmame",
 		Port:     6379,
 		DB:       0,
+		TTL:      3600,
 	}
 
 	hook, err := logredis.NewHook(hookConfig)

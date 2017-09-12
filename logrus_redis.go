@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/garyburd/redigo/redis"
+	"github.com/sirupsen/logrus"
 )
 
 // HookConfig stores configuration needed to setup the hook
@@ -19,6 +19,7 @@ type HookConfig struct {
 	Hostname string
 	Port     int
 	DB       int
+	TTL      int
 }
 
 // RedisHook to sends logs to Redis server
@@ -30,6 +31,7 @@ type RedisHook struct {
 	AppName        string
 	Hostname       string
 	RedisPort      int
+	TTL            int
 }
 
 // NewHook creates a hook to be added to an instance of logger
@@ -56,6 +58,7 @@ func NewHook(config HookConfig) (*RedisHook, error) {
 		LogstashFormat: config.Format,
 		AppName:        config.App,
 		Hostname:       config.Host,
+		TTL:            config.TTL,
 	}, nil
 }
 
@@ -87,6 +90,14 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 	if err != nil {
 		return fmt.Errorf("error sending message to REDIS: %s", err)
 	}
+
+	if hook.TTL != 0 {
+		_, err = conn.Do("EXPIRE", hook.RedisKey, hook.TTL)
+		if err != nil {
+			return fmt.Errorf("error setting TTL to key: %s, %s", hook.RedisKey, err)
+		}
+	}
+
 	return nil
 }
 
