@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/garyburd/redigo/redis"
+	"github.com/sirupsen/logrus"
 )
 
 // RedisHook to sends logs to Redis server

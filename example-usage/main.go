@@ -1,8 +1,8 @@
 package main
 
 import (
-	log "github.com/Sirupsen/logrus"
 	"github.com/rogierlommers/logrus-redis-hook"
+	log "github.com/sirupsen/logrus"
 )
 
 func init() {
