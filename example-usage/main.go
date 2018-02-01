@@ -17,6 +17,7 @@ func init() {
 		Port:     6379,
 		DB:       0,
 		TTL:      3600,
+		// Password: "your-secret-password",
 	}
 
 	hook, err := logredis.NewHook(hookConfig)

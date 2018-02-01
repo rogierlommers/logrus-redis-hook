@@ -156,7 +156,7 @@ func newRedisConnectionPool(server, password string, port int, db int) *redis.Po
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", hostPort, redis.DialDatabase(db),redis.DialPassword(password))
+			c, err := redis.Dial("tcp", hostPort, redis.DialDatabase(db), redis.DialPassword(password))
 			if err != nil {
 				return nil, err
 			}
