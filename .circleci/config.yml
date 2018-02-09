@@ -12,4 +12,5 @@ jobs:
       - run: go test -v ./...
       - run: go test -cover -race -coverprofile=coverage.out
       - run: go tool cover -func=coverage.out
+      - run: ls
       - run: /home/ubuntu/.go_workspace/bin/goveralls -coverprofile=coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
