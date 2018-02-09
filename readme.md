@@ -1,5 +1,6 @@
 # Redis Hook for [Logrus](https://github.com/Sirupsen/logrus) <img src="http://i.imgur.com/hTeVwmJ.png" width="40" height="40" alt=":walrus:" class="emoji" title=":walrus:"/>
-[![Build Status](https://travis-ci.org/rogierlommers/logrus-redis-hook.svg?branch=master)](https://travis-ci.org/rogierlommers/logrus-redis-hook)
+
+[![CircleCI](https://circleci.com/gh/rogierlommers/logrus-redis-hook.svg?style=svg)](https://circleci.com/gh/rogierlommers/logrus-redis-hook)
 
 ## Why?
 
