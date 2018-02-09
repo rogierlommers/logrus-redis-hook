@@ -17,6 +17,7 @@ $ go get github.com/rogierlommers/logrus-redis-hook
 ## Usage
 
 ```go
+
 package main
 
 import (
@@ -61,6 +62,7 @@ func main() {
 	logrus.SetOutput(ioutil.Discard)
 	logrus.Info("This will only be sent to Redis")
 }
+
 ```
 
 
