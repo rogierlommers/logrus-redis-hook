@@ -1,6 +1,6 @@
 # Redis Hook for [Logrus](https://github.com/Sirupsen/logrus) <img src="http://i.imgur.com/hTeVwmJ.png" width="40" height="40" alt=":walrus:" class="emoji" title=":walrus:"/>
 
-[![CircleCI](https://circleci.com/gh/rogierlommers/logrus-redis-hook.svg?style=svg)](https://circleci.com/gh/rogierlommers/logrus-redis-hook) [![Coverage Status](https://coveralls.io/repos/github/rogierlommers/logrus-redis-hook/badge.svg?branch=master)](https://coveralls.io/github/rogierlommers/logrus-redis-hook?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/<username>/<library>)](https://goreportcard.com/report/github.com/rogierlommers/logrus-redis-hook)
+[![CircleCI](https://circleci.com/gh/rogierlommers/logrus-redis-hook.svg?style=svg)](https://circleci.com/gh/rogierlommers/logrus-redis-hook) [![Coverage Status](https://coveralls.io/repos/github/rogierlommers/logrus-redis-hook/badge.svg?branch=master)](https://coveralls.io/github/rogierlommers/logrus-redis-hook?branch=master) [![Go Report Card][![Go Report Card](https://goreportcard.com/badge/github.com/rogierlommers/logrus-redis-hook)](https://goreportcard.com/report/github.com/rogierlommers/logrus-redis-hook)
 
 ## Why?
 
