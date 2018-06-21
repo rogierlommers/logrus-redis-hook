@@ -13,7 +13,7 @@ func init() {
 		Key:      "my_redis_key",
 		Format:   "v0",
 		App:      "my_app_name",
-		Hostname: "my_app_hostmame",
+		Hostname: "my_app_hostname",
 		Port:     6379,
 		DB:       0,
 		TTL:      3600,
