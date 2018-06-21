@@ -34,7 +34,7 @@ func init() {
 		Format:   "v0",
 		App:      "my_app_name",
 		Port:     6379,
-		Hostname: "my_app_hostmame", // will be sent to field @source_host
+		Hostname: "my_app_hostname", // will be sent to field @source_host
 		DB:       0, // optional
 		TTL:      3600,
 	}
