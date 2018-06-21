@@ -57,9 +57,10 @@ func NewHook(config HookConfig) (*RedisHook, error) {
 		RedisKey:       config.Key,
 		LogstashFormat: config.Format,
 		AppName:        config.App,
-		Hostname:       config.Host,
+		Hostname:       config.Hostname,
 		TTL:            config.TTL,
 	}, nil
+
 }
 
 // Fire is called when a log event is fired.
