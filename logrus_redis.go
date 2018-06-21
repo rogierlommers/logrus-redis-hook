@@ -51,16 +51,6 @@ func NewHook(config HookConfig) (*RedisHook, error) {
 		return nil, fmt.Errorf("unable to connect to REDIS: %s", err)
 	}
 
-	// return &RedisHook{
-	// 	RedisHost:      config.Host,
-	// 	RedisPool:      pool,
-	// 	RedisKey:       config.Key,
-	// 	LogstashFormat: config.Format,
-	// 	AppName:        config.App,
-	// 	Hostname:       config.Host,
-	// 	TTL:            config.TTL,
-	// }, nil
-
 	return &RedisHook{
 		RedisHost:      config.Host,
 		RedisPool:      pool,

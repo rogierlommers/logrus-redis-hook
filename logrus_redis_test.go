@@ -19,7 +19,7 @@ func TestNewHookFunc(t *testing.T) {
 
 	hook, err := NewHook(config)
 	if hook != nil {
-		t.Fatalf("TestNewHookFunc, expected no hook, got hook: %s", hook)
+		t.Fatalf("TestNewHookFunc, expected no hook, got hook: %v", hook)
 	}
 
 	if err == nil {
