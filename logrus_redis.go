@@ -108,6 +108,7 @@ func (hook *RedisHook) Fire(entry *logrus.Entry) error {
 // Levels returns the available logging levels.
 func (hook *RedisHook) Levels() []logrus.Level {
 	return []logrus.Level{
+		logrus.TraceLevel,
 		logrus.DebugLevel,
 		logrus.InfoLevel,
 		logrus.WarnLevel,
