@@ -29,7 +29,8 @@ func init() {
 }
 
 func main() {
-	// when hook is injected succesfully, logs will be send to redis server
+	logrus.SetLevel(logrus.TraceLevel)
+	logrus.Trace("just some trace logging...")
 	logrus.Debug("just some debug logging...")
 	logrus.Info("just some info logging...")
 	logrus.Warn("just some warn logging...")
