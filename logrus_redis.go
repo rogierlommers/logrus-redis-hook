@@ -32,11 +32,12 @@ type RedisHook struct {
 	Hostname       string
 	RedisPort      int
 	TTL            int
+	DialOptions    []redis.DialOption
 }
 
 // NewHook creates a hook to be added to an instance of logger
-func NewHook(config HookConfig) (*RedisHook, error) {
-	pool := newRedisConnectionPool(config.Host, config.Password, config.Port, config.DB)
+func NewHook(config HookConfig, options ...redis.DialOption) (*RedisHook, error) {
+	pool := newRedisConnectionPool(config.Host, config.Password, config.Port, config.DB, options...)
 
 	if config.Format != "v0" && config.Format != "v1" && config.Format != "access" {
 		return nil, fmt.Errorf("unknown message format")
@@ -60,6 +61,7 @@ func NewHook(config HookConfig) (*RedisHook, error) {
 		AppName:        config.App,
 		Hostname:       config.Hostname,
 		TTL:            config.TTL,
+		DialOptions:    options,
 	}, nil
 
 }
@@ -166,13 +168,13 @@ func createAccessLogMessage(entry *logrus.Entry, appName, hostname string) map[s
 	return m
 }
 
-func newRedisConnectionPool(server, password string, port int, db int) *redis.Pool {
+func newRedisConnectionPool(server, password string, port int, db int, options ...redis.DialOption) *redis.Pool {
 	hostPort := fmt.Sprintf("%s:%d", server, port)
 	return &redis.Pool{
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", hostPort, redis.DialDatabase(db), redis.DialPassword(password))
+			c, err := redis.Dial("tcp", hostPort, redis.DialDatabase(db), redis.DialPassword(password), options...)
 			if err != nil {
 				return nil, err
 			}
