@@ -1,0 +1,6 @@
+# Repository notes
+
+- This is a single Go module (`github.com/rogierlommers/logrus-redis-hook`, `package logredis` in `logrus_redis.go`). The `go.mod` directive requires Go 1.23; `.github/workflows/go.yml` checks Go 1.23 and the latest stable Go release.
+- Focused test: `go test . -run '^TestNewHookFunc$'`; whole repository, including builds of the examples: `go test ./...`; static checks: `go vet ./...`. The sole checked-in test checks that an invalid format is rejected before connecting to Redis; there is no checked-in integration suite.
+- `NewHook` accepts only `v0`, `v1`, and `access` and PINGs Redis before returning. `Fire` serializes a message to JSON, `RPUSH`es it to the configured Redis list, then runs `EXPIRE` on the key after every message when TTL is nonzero. The format-specific JSON mappings live in `createV0Message`, `createV1Message`, and `createAccessLogMessage`; preserve their distinct field layouts when changing output.
+- `docker-compose/docker-compose.yml` is legacy Compose syntax and starts Redis 3.0.7 and Logstash 2.3.4, **not** Kibana (despite `docker-compose/readme.md`). `docker-compose/logstash.conf` consumes list key `my_redis_key` with `oldlogstashjson` (v0); the app-logging example uses that key and format, while the access-logging example uses `access`. Do not assume the Compose Logstash codec covers the access example.

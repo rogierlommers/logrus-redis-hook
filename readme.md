@@ -67,7 +67,7 @@ func main() {
 
 
 ## Testing
-Please see the `docker-compose` directory for information about how to test. There is a readme inside.
+With Go 1.23 or newer, run `go test ./...` from the repository root. This checks the library and builds both examples; the checked-in test does not require Redis. GitHub Actions also runs `go vet ./...` and `go test ./...` on Go 1.23 and the latest stable release. Dependabot checks Go modules and GitHub Actions weekly and opens update PRs for review. For the optional Redis/Logstash environment, see `docker-compose/readme.md` (it does not include Kibana).
 
 ## In case of hook: disable writing to stdout
 See this: https://github.com/Sirupsen/logrus/issues/328#issuecomment-210758435
