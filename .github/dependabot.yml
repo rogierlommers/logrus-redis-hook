@@ -4,7 +4,22 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    assignees: [rogierlommers]
+    groups:
+      go-dependencies:
+        patterns: ["*"]
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    assignees: [rogierlommers]
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: docker-compose
+    directory: /docker-compose
+    schedule:
+      interval: weekly
+    assignees: [rogierlommers]
